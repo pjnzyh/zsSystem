@@ -3,8 +3,14 @@
 实现文件上传、信息提取、数据保存
 """
 import os
+import sys
 from typing import Optional, Tuple, Dict
 from datetime import datetime
+
+# 修复Streamlit Cloud路径问题
+if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from sqlmodel import Session, select
 from models import Certificate, FileRecord, User
 from database import get_session

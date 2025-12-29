@@ -3,9 +3,15 @@
 实现用户管理、数据导出、批量导入
 """
 import os
+import sys
 import pandas as pd
 from typing import Tuple, List, Dict
 from datetime import datetime
+
+# 修复Streamlit Cloud路径问题
+if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from sqlmodel import Session, select
 from models import User, Certificate, FileRecord
 from database import get_session

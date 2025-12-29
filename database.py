@@ -1,9 +1,15 @@
 """
 数据库初始化和管理
 """
+import sys
+import os
+
+# 修复Streamlit Cloud路径问题
+if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from sqlmodel import SQLModel, create_engine, Session, select
 from typing import Optional
-import os
 from datetime import datetime
 from models import User, Certificate, FileRecord, SystemConfig
 

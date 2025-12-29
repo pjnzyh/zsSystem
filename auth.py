@@ -7,7 +7,14 @@ from typing import Optional, Tuple
 from sqlmodel import Session, select
 from models import User
 from database import get_session, get_user_by_account_id, get_user_by_email
-from utils import validate_account_id, validate_email, validate_password
+try:
+    from utils import validate_account_id, validate_email, validate_password
+except ImportError:
+    # Streamlit Cloud路径修复
+    import sys
+    import os
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from utils import validate_account_id, validate_email, validate_password
 
 
 def hash_password(password: str) -> str:

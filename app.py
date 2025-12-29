@@ -4,8 +4,13 @@
 """
 import streamlit as st
 import os
+import sys
 from datetime import datetime
 from PIL import Image
+
+# 修复Streamlit Cloud路径问题
+if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # 尝试导入poppler配置（如果存在）
 try:
