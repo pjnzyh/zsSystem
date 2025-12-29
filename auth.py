@@ -2,15 +2,8 @@
 用户认证模块
 实现用户注册、登录、权限管理
 """
-import sys
-import os
 import hashlib
 from typing import Optional, Tuple
-
-# 修复Streamlit Cloud路径问题（必须在其他导入之前）
-if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
 from sqlmodel import Session, select
 from models import User
 from database import get_session, get_user_by_account_id, get_user_by_email

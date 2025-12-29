@@ -4,13 +4,8 @@
 """
 import streamlit as st
 import os
-import sys
 from datetime import datetime
 from PIL import Image
-
-# 修复Streamlit Cloud路径问题
-if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # 尝试导入poppler配置（如果存在）
 try:
@@ -32,21 +27,6 @@ from models import User
 
 # 设置页面配置
 st.set_page_config(**PAGE_CONFIG)
-
-
-# 使用Streamlit缓存初始化数据库，避免重复初始化
-@st.cache_resource
-def initialize_database():
-    """初始化数据库（仅执行一次）"""
-    try:
-        init_database()
-        return True
-    except Exception as e:
-        st.error(f"数据库初始化失败: {str(e)}")
-        return False
-
-# 执行数据库初始化
-initialize_database()
 
 
 def init_session_state():

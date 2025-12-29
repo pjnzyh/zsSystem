@@ -3,16 +3,10 @@ API客户端模块
 集成GLM-4V等视觉识别API
 """
 import os
-import sys
 import base64
 import json
 import re
 from typing import Dict, Optional, Tuple
-
-# 修复Streamlit Cloud路径问题
-if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
 from zhipuai import ZhipuAI
 
 
