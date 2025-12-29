@@ -9,21 +9,41 @@ if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from sqlmodel import SQLModel, create_engine, Session, select
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from datetime import datetime
-from models import User, Certificate, FileRecord, SystemConfig
+
+# 使用TYPE_CHECKING避免运行时导入，仅用于类型检查
+if TYPE_CHECKING:
+    from models import User, Certificate, FileRecord, SystemConfig
 
 # 数据库文件路径
 DB_PATH = "zsystem.db"
 DATABASE_URL = f"sqlite:///{DB_PATH}"
 
-# 创建数据库引擎
-engine = create_engine(DATABASE_URL, echo=False, connect_args={"check_same_thread": False})
+# 创建数据库引擎（使用单例模式）
+_engine = None
+
+def get_engine():
+    """获取数据库引擎（单例模式）"""
+    global _engine
+    if _engine is None:
+        _engine = create_engine(
+            DATABASE_URL, 
+            echo=False, 
+            connect_args={"check_same_thread": False},
+            poolclass=None  # 禁用连接池，避免Streamlit重载问题
+        )
+    return _engine
+
+engine = get_engine()
 
 
 def init_database():
     """初始化数据库，创建所有表"""
-    SQLModel.metadata.create_all(engine)
+    from models import User, SystemConfig
+    
+    # 使用 checkfirst=True 避免重复创建表
+    SQLModel.metadata.create_all(engine, checkfirst=True)
     print("数据库初始化完成")
     
     # 创建默认管理员账号
@@ -76,8 +96,9 @@ def get_session():
     return Session(engine)
 
 
-def get_user_by_account_id(account_id: str) -> Optional[User]:
+def get_user_by_account_id(account_id: str) -> Optional["User"]:
     """根据学（工）号获取用户"""
+    from models import User
     with get_session() as session:
         user = session.exec(
             select(User).where(User.account_id == account_id)
@@ -85,8 +106,9 @@ def get_user_by_account_id(account_id: str) -> Optional[User]:
         return user
 
 
-def get_user_by_email(email: str) -> Optional[User]:
+def get_user_by_email(email: str) -> Optional["User"]:
     """根据邮箱获取用户"""
+    from models import User
     with get_session() as session:
         user = session.exec(
             select(User).where(User.email == email)
@@ -96,6 +118,7 @@ def get_user_by_email(email: str) -> Optional[User]:
 
 def get_config(key: str) -> Optional[str]:
     """获取系统配置"""
+    from models import SystemConfig
     with get_session() as session:
         config = session.exec(
             select(SystemConfig).where(SystemConfig.config_key == key)
@@ -105,6 +128,7 @@ def get_config(key: str) -> Optional[str]:
 
 def update_config(key: str, value: str, user_id: Optional[int] = None):
     """更新系统配置"""
+    from models import SystemConfig
     with get_session() as session:
         config = session.exec(
             select(SystemConfig).where(SystemConfig.config_key == key)

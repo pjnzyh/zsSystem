@@ -34,6 +34,21 @@ from models import User
 st.set_page_config(**PAGE_CONFIG)
 
 
+# 使用Streamlit缓存初始化数据库，避免重复初始化
+@st.cache_resource
+def initialize_database():
+    """初始化数据库（仅执行一次）"""
+    try:
+        init_database()
+        return True
+    except Exception as e:
+        st.error(f"数据库初始化失败: {str(e)}")
+        return False
+
+# 执行数据库初始化
+initialize_database()
+
+
 def init_session_state():
     """初始化会话状态"""
     if 'user' not in st.session_state:
